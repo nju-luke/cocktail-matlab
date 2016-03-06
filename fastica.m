@@ -29,11 +29,11 @@ for p=1:row
         end
 
         %采用收缩策略，类似于正交化的过程
-        sum=zeros(row,1);
+        sum_1=zeros(row,1);
         for i=1:p-1
-            sum=sum+W(:,p)'*W(:,i)*W(:,i);
+            sum_1=sum_1+W(:,p)'*W(:,i)*W(:,i);
         end
-        W(:,p)=W(:,p)-sum;
+        W(:,p)=W(:,p)-sum_1;
         W(:,p)=W(:,p)/norm(W(:,p));
         
         %收敛条件
