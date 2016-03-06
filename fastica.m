@@ -1,6 +1,6 @@
 function out=fastica(X,method)
-% ÊäÈë¾ØÕóX£¬ĞĞÎªÌØÕ÷Êı£¬ÁĞÎª²ÉÑùÊı
-% Ñ¡Ôñ·½·¨method£º1.¶¨µã   2. ×î´óìØĞÅÏ¢
+% è¾“å…¥çŸ©é˜µXï¼Œè¡Œä¸ºç‰¹å¾æ•°ï¼Œåˆ—ä¸ºé‡‡æ ·æ•°
+% é€‰æ‹©æ–¹æ³•methodï¼š1.å®šç‚¹   2. æœ€å¤§ç†µä¿¡æ¯
 [row, col]=size(X);
 
 mean_X=mean(X,2);
@@ -8,8 +8,8 @@ X=X-repmat(mean_X,1,col);
 [V,D]=eig(X*X');
 X=V*D^(-1/2)*V'*X;
 
-%FastIcaËã·¨
-%ÇóÍêºó W ÊÇ »ìºÏ¾ØÕó A µÄ½üËÆ
+%FastIcaç®—æ³•
+%æ±‚å®Œå W æ˜¯ æ··åˆçŸ©é˜µ A çš„è¿‘ä¼¼
 W=rand(row);
 maxTimex=1000;
 for p=1:row
@@ -19,15 +19,16 @@ for p=1:row
         pred=W(:,p);        
         switch method
             case {1}                
-                W(:,p)=1/col*X*((W(:,p)'*X).^3)'-3*W(:,p);                    %¶¨µã·¨
+                W(:,p)=1/col*X*((W(:,p)'*X).^3)'-3*W(:,p);                    %å®šç‚¹æ³•
             case {2}
-               for j=1:row
-                    temp(j,1)=mean(X(j,:).*tanh(W(:,p)'*X));                %×î´óìØĞÅÏ¢
-               end
-                W(:,p)=temp-mean(1-(tanh(W(:,p)'*X)).^2)*W(:,p);
+%               for j=1:row
+%                    temp(j,1)=mean(X(j,:).*tanh(W(:,j)'*X));                %æœ€å¤§ç†µä¿¡æ¯
+%               end
+%                W(:,p)=temp-mean(1-(tanh(W(:,p)'*X)).^2)*W(:,p);
+                 W(:,p)=mean(X.*tanh(W'*X),2)-mean(1-(tanh(W(:,p)'*X)).^2)*W(:,p);
         end
 
-        %²ÉÓÃÊÕËõ²ßÂÔ£¬ÀàËÆÓÚÕı½»»¯µÄ¹ı³Ì
+        %é‡‡ç”¨æ”¶ç¼©ç­–ç•¥ï¼Œç±»ä¼¼äºæ­£äº¤åŒ–çš„è¿‡ç¨‹
         sum=zeros(row,1);
         for i=1:p-1
             sum=sum+W(:,p)'*W(:,i)*W(:,i);
@@ -35,7 +36,7 @@ for p=1:row
         W(:,p)=W(:,p)-sum;
         W(:,p)=W(:,p)/norm(W(:,p));
         
-        %ÊÕÁ²Ìõ¼ş
+        %æ”¶æ•›æ¡ä»¶
         if abs(dot(W(:,p),W(:,p)))>1-1e-22
             break
         end
@@ -47,6 +48,6 @@ for p=1:row
     end
 end
  
-%ÍÆËãÔ´ĞÅºÅ
+%æ¨ç®—æºä¿¡å·
 out=W'*X;
  
